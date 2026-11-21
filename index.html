@@ -7,6 +7,7 @@
   <style>
     :root {
       --navy: #0f2b46;
+      --blue: #1a73e8;
       --gold: #c9a24b;
       --gold-dark: #8f6b1c;
       --bg: #f6f5f2;
@@ -89,12 +90,12 @@
     .meta { font-size: clamp(15px, 2vw, 17px); font-weight: 600; margin-bottom: 10px; }
     .audience { font-size: 14px; opacity: .82; }
 
-    /* Nội dung */
-    section { padding: 56px 0; }
+    /* Nội dung chung */
+    section { padding: 60px 0; }
     section.alt { background: #fff; }
     .wrap { max-width: 1100px; margin: 0 auto; padding: 0 18px; }
     h2.sec { color: var(--navy); text-align: center; font-size: clamp(24px, 4vw, 34px); line-height: 1.2; }
-    h2.sec::after { content: ""; display: block; width: 48px; height: 3px; background: var(--gold); margin: 12px auto 30px; border-radius: 2px; }
+    h2.sec::after { content: ""; display: block; width: 48px; height: 3px; background: var(--gold); margin: 12px auto 34px; border-radius: 2px; }
 
     .grid { display: grid; grid-template-columns: 1fr; gap: 18px; }
     @media (min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
@@ -110,9 +111,24 @@
       flex-direction: column;
     }
     section.alt .card { background: var(--bg); }
-    .thumb { aspect-ratio: 4/3; background: #eceae4; cursor: zoom-in; overflow: hidden; }
+    .thumb { position: relative; aspect-ratio: 4/3; background: #eceae4; cursor: zoom-in; overflow: hidden; }
     .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
     .thumb:hover img { transform: scale(1.04); }
+    .thumb-hint {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      background: rgba(15, 43, 70, .78);
+      color: #fff;
+      font-size: 12px;
+      padding: 4px 11px;
+      border-radius: 999px;
+      pointer-events: none;
+      opacity: .9;
+    }
+    .video-box { position: relative; aspect-ratio: 16/9; background: #0b1623; overflow: hidden; }
+    .video-box iframe, .video-box video { width: 100%; height: 100%; border: 0; display: block; }
+
     .card-body { padding: 18px 20px 20px; flex: 1; }
     .card h3 { color: var(--navy); font-size: 18px; line-height: 1.35; }
     .fields { margin-top: 6px; }
@@ -122,22 +138,176 @@
     .field li { margin: 3px 0; }
     .muted { color: var(--muted); text-align: center; }
 
-    /* Dạng dòng thời gian (Lịch trình & Nội dung chính) */
-    .timeline .grid { grid-template-columns: 1fr; gap: 14px; }
-    .timeline .card { border-top: none; border-left: 5px solid var(--navy); }
-    .timeline .card h3 { margin-bottom: 2px; }
-    @media (min-width: 720px) {
-      .timeline .thumb { max-height: 360px; }
-      .timeline .card-body { display: flex; gap: 28px; align-items: flex-start; }
-      .timeline .card h3 { flex: 0 0 200px; color: var(--gold-dark); font-size: 19px; margin: 0; }
-      .timeline .fields { margin-top: 0; flex: 1; }
+    /* Lịch trình: timeline trục dọc tối giản (giờ trái - chấm & trục giữa - nội dung phải) */
+    .vtl {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 28px 26px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, .05);
+    }
+    .vtl-item {
+      display: grid;
+      grid-template-columns: 122px 24px 1fr;
+      gap: 0 16px;
+      align-items: start;
+    }
+    .vtl-time {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      padding-top: 2px;
+      line-height: 1.4;
+    }
+    .vtl-rail {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-self: stretch;
+    }
+    .vtl-rail::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      bottom: -10px;
+      left: 50%;
+      width: 2px;
+      transform: translateX(-50%);
+      background: #d8dce3;
+    }
+    .vtl-item:last-child .vtl-rail::before { display: none; }
+    .vtl-dot {
+      position: relative;
+      z-index: 1;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--blue);
+      margin-top: 5px;
+      box-shadow: 0 0 0 4px rgba(26, 115, 232, .14);
+      flex-shrink: 0;
+    }
+    .vtl-body {
+      padding-bottom: 24px;
+    }
+    .vtl-item:last-child .vtl-body { padding-bottom: 0; }
+    .vtl-title {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.35;
+    }
+    .vtl-desc {
+      margin-top: 4px;
+      font-size: 14.5px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .vtl-desc ul { padding-left: 16px; margin-top: 2px; }
+    .vtl-desc li { margin: 2px 0; }
+    @media (max-width: 560px) {
+      .vtl { padding: 20px 14px; }
+      .vtl-item { grid-template-columns: 90px 20px 1fr; gap: 0 10px; }
+      .vtl-time { font-size: 12.5px; }
+      .vtl-title { font-size: 15px; }
+      .vtl-desc { font-size: 13.5px; }
+    }
+
+    /* Nội dung chính: phong cách editorial xen kẽ trái - phải (tham khảo Sneaker Con) */
+    .editorial-list {
+      display: flex;
+      flex-direction: column;
+      gap: 44px;
+    }
+    .ed-item {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      align-items: center;
+    }
+    .ed-media {
+      width: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #efede8;
+      box-shadow: 0 10px 30px rgba(15, 43, 70, .10);
+    }
+    .ed-media .thumb {
+      aspect-ratio: 16/9;
+      background: #efede8;
+    }
+    .ed-media .thumb img {
+      object-fit: contain;
+    }
+    .ed-media .thumb:hover img {
+      transform: scale(1.02);
+    }
+    .ed-media .video-box {
+      aspect-ratio: 16/9;
+    }
+    .ed-text {
+      width: 100%;
+    }
+    .ed-item:not(.has-media) {
+      background: var(--bg);
+      border-radius: 18px;
+      padding: 26px 28px;
+      border-left: 4px solid var(--gold);
+      align-items: flex-start;
+    }
+    .ed-kicker {
+      display: inline-block;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--gold-dark);
+      margin-bottom: 8px;
+    }
+    .ed-text h3 {
+      font-size: clamp(22px, 3vw, 28px);
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.22;
+      margin-bottom: 12px;
+    }
+    .ed-text p {
+      font-size: 16px;
+      color: #36393f;
+      line-height: 1.65;
+    }
+    .ed-text ul {
+      margin-top: 8px;
+      padding-left: 20px;
+      font-size: 16px;
+      color: #36393f;
+      line-height: 1.7;
+    }
+    .ed-text li { margin: 4px 0; }
+    @media (min-width: 820px) {
+      .editorial-list { gap: 56px; }
+      .ed-item.has-media {
+        flex-direction: row;
+        gap: 44px;
+      }
+      .ed-item.has-media.flip {
+        flex-direction: row-reverse;
+      }
+      .ed-item.has-media .ed-media {
+        flex: 0 0 52%;
+      }
+      .ed-item.has-media .ed-text {
+        flex: 1;
+      }
     }
 
     /* Xem ảnh phóng to */
     .lb {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, .9);
+      background: rgba(0, 0, 0, .92);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -191,8 +361,8 @@
 
     // Mỗi tab trong Sheet là một mục trên trang, theo đúng thứ tự này
     const SECTIONS = [
-      { tab: "Lịch trình", title: "Lịch trình", layout: "timeline" },
-      { tab: "Nội dung chính", title: "Nội dung chính", layout: "timeline" },
+      { tab: "Lịch trình", title: "Lịch trình", layout: "vtl" },
+      { tab: "Nội dung chính", title: "Nội dung chính", layout: "editorial" },
       { tab: "Khu trải nghiệm", title: "Khu trải nghiệm" },
       { tab: "Ẩm thực", title: "Ẩm thực & combo" },
       { tab: "Chính sách", title: "Chính sách bán hàng" },
@@ -230,14 +400,56 @@
         .filter(obj => Object.values(obj).some(v => v !== ""));
     }
 
+    function driveFileId(url) {
+      if (!url || !url.includes("drive.google.com")) return "";
+      const m = url.match(/\/d\/([\w-]+)/) || url.match(/[?&]id=([\w-]+)/);
+      return m ? m[1] : "";
+    }
+
     // Link ảnh Google Drive (chia sẻ "bất kỳ ai có link") -> link hiển thị được
     function imgUrl(url) {
       if (!url) return "";
-      const m = url.match(/\/d\/([\w-]+)/) || url.match(/[?&]id=([\w-]+)/);
-      if (m && url.includes("drive.google.com")) {
-        return `https://lh3.googleusercontent.com/d/${m[1]}=w1600`;
-      }
+      const id = driveFileId(url);
+      if (id) return `https://lh3.googleusercontent.com/d/${id}=w1600`;
       return url;
+    }
+
+    // Nhận diện link video (YouTube, MP4/WebM, hoặc Google Drive video)
+    function parseVideo(url, forceDriveVideo = false) {
+      if (!url) return null;
+      const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
+      if (yt) {
+        return { type: "iframe", src: `https://www.youtube.com/embed/${yt[1]}?rel=0` };
+      }
+      if (/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)) {
+        return { type: "video", src: url };
+      }
+      const dId = driveFileId(url);
+      if (dId && (forceDriveVideo || /\/preview(\?|$)/i.test(url))) {
+        return { type: "iframe", src: `https://drive.google.com/file/d/${dId}/preview` };
+      }
+      return null;
+    }
+
+    function videoNode(v, title) {
+      const box = el("div", "video-box");
+      if (v.type === "video") {
+        const vid = el("video");
+        vid.src = v.src;
+        vid.controls = true;
+        vid.playsInline = true;
+        vid.preload = "metadata";
+        box.appendChild(vid);
+      } else {
+        const ifr = el("iframe");
+        ifr.src = v.src;
+        ifr.title = title || "Video";
+        ifr.loading = "lazy";
+        ifr.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+        ifr.allowFullscreen = true;
+        box.appendChild(ifr);
+      }
+      return box;
     }
 
     // Tách các ý trong ô bằng dấu ";"
@@ -275,7 +487,7 @@
       document.body.appendChild(lb);
     }
 
-    function thumb(src, alt) {
+    function thumb(src, alt, showHint = false) {
       const box = el("div", "thumb");
       const img = el("img");
       img.src = src;
@@ -283,26 +495,129 @@
       img.loading = "lazy";
       img.onerror = () => { box.hidden = true; };
       box.appendChild(img);
+      if (showHint) box.appendChild(el("span", "thumb-hint", "Phóng to"));
       box.addEventListener("click", () => openLightbox(src, alt));
       return box;
     }
 
-    // Mỗi hàng trong Sheet thành một thẻ.
-    // Cột đầu là tiêu đề, cột "Ảnh" (nếu có) hiện ảnh ở trên, các cột còn lại là nội dung.
+    function buildMedia(row, title, showHint = false) {
+      const rawVideo = row["Video"] || "";
+      const rawImg = row["Ảnh"] || "";
+      const vFromCol = parseVideo(rawVideo, true);
+      if (vFromCol) return videoNode(vFromCol, title);
+      const vFromImg = parseVideo(rawImg, false);
+      if (vFromImg) return videoNode(vFromImg, title);
+      const photo = rawImg ? imgUrl(rawImg) : "";
+      if (photo) return thumb(photo, title, showHint);
+      return null;
+    }
+
+    // Timeline trục dọc tối giản cho phần Lịch trình
+    function buildVerticalTimeline(rows) {
+      const wrap = el("div", "vtl reveal");
+      rows.forEach(r => {
+        const entries = Object.entries(r);
+        const time = r["Thời gian"] || entries[0]?.[1] || "";
+        const title = r["Hạng mục"] || entries[1]?.[1] || "";
+        const detail = r["Nội dung chi tiết"] || r["Nội dung"] || entries[2]?.[1] || "";
+
+        const item = el("div", "vtl-item");
+        item.appendChild(el("div", "vtl-time", time));
+
+        const rail = el("div", "vtl-rail");
+        rail.appendChild(el("span", "vtl-dot"));
+        item.appendChild(rail);
+
+        const body = el("div", "vtl-body");
+        body.appendChild(el("div", "vtl-title", title));
+        if (detail) {
+          const desc = el("div", "vtl-desc");
+          const parts = splitList(detail);
+          if (parts.length > 1) {
+            const ul = el("ul");
+            parts.forEach(t => ul.appendChild(el("li", "", t)));
+            desc.appendChild(ul);
+          } else {
+            desc.textContent = parts[0] || detail;
+          }
+          body.appendChild(desc);
+        }
+        item.appendChild(body);
+        wrap.appendChild(item);
+      });
+      return wrap;
+    }
+
+    // Phong cách editorial xen kẽ trái - phải cho phần Nội dung chính
+    function buildEditorial(rows) {
+      const list = el("div", "editorial-list");
+      let mediaCount = 0;
+
+      rows.forEach((row, index) => {
+        const entries = Object.entries(row);
+        const time = row["Thời gian"] || "";
+        const title = row["Hạng mục"] || entries[0]?.[1] || "";
+        const detail = row["Chi tiết"] || "";
+
+        const item = el("article", "ed-item reveal");
+        item.style.transitionDelay = `${Math.min(index, 6) * 80}ms`;
+
+        const media = buildMedia(row, title, true);
+        if (media) {
+          item.classList.add("has-media");
+          if (mediaCount % 2 === 1) item.classList.add("flip");
+          mediaCount++;
+          const mBox = el("div", "ed-media");
+          mBox.appendChild(media);
+          item.appendChild(mBox);
+        }
+
+        const text = el("div", "ed-text");
+        if (time) text.appendChild(el("span", "ed-kicker", time));
+        if (title) text.appendChild(el("h3", "", title));
+
+        if (detail) {
+          const parts = splitList(detail);
+          if (parts.length > 1) {
+            const ul = el("ul");
+            parts.forEach(t => ul.appendChild(el("li", "", t)));
+            text.appendChild(ul);
+          } else {
+            text.appendChild(el("p", "", parts[0] || detail));
+          }
+        }
+
+        const extra = el("div", "fields");
+        entries.forEach(([label, value]) => {
+          if (!["Thời gian", "Hạng mục", "Chi tiết", "Ảnh", "Video"].includes(label) && value) {
+            extra.appendChild(field(label, value));
+          }
+        });
+        if (extra.children.length) text.appendChild(extra);
+
+        item.appendChild(text);
+        list.appendChild(item);
+      });
+      return list;
+    }
+
+    // Thẻ chuẩn (Khu trải nghiệm, Ẩm thực, Chính sách, Lưu ý)
     function card(row, index) {
       const entries = Object.entries(row);
       const title = entries[0][1];
       const c = el("article", "card reveal");
       c.style.transitionDelay = `${Math.min(index, 8) * 90}ms`;
 
-      const photo = row["Ảnh"] ? imgUrl(row["Ảnh"]) : "";
-      if (photo) c.appendChild(thumb(photo, title));
+      const media = buildMedia(row, title, false);
+      if (media) c.appendChild(media);
 
       const body = el("div", "card-body");
       body.appendChild(el("h3", "", title));
       const fields = el("div", "fields");
       entries.slice(1).forEach(([label, value]) => {
-        if (label !== "Ảnh" && value) fields.appendChild(field(label, value));
+        if (label !== "Ảnh" && label !== "Video" && value) {
+          fields.appendChild(field(label, value));
+        }
       });
       body.appendChild(fields);
       c.appendChild(body);
@@ -337,17 +652,22 @@
         link.href = `#${id}`;
         navInner.appendChild(link);
 
-        const classes = [i % 2 === 1 ? "alt" : "", s.layout === "timeline" ? "timeline" : ""].filter(Boolean).join(" ");
-        const sec = el("section", classes);
+        const sec = el("section", i % 2 === 1 ? "alt" : "");
         sec.id = id;
         const wrap = el("div", "wrap");
         wrap.appendChild(el("h2", "sec reveal", s.title));
 
         const rows = dataList[i];
         if (rows.length) {
-          const grid = el("div", "grid");
-          rows.forEach((r, j) => grid.appendChild(card(r, j)));
-          wrap.appendChild(grid);
+          if (s.layout === "vtl") {
+            wrap.appendChild(buildVerticalTimeline(rows));
+          } else if (s.layout === "editorial") {
+            wrap.appendChild(buildEditorial(rows));
+          } else {
+            const grid = el("div", "grid");
+            rows.forEach((r, j) => grid.appendChild(card(r, j)));
+            wrap.appendChild(grid);
+          }
         } else {
           wrap.appendChild(el("p", "muted", "Chưa có nội dung."));
         }
