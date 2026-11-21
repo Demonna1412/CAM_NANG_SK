@@ -229,23 +229,35 @@
     }
     .ed-media {
       width: 100%;
-      border-radius: 18px;
-      overflow: hidden;
-      background: #efede8;
-      box-shadow: 0 10px 30px rgba(15, 43, 70, .10);
+      display: flex;
+      justify-content: center;
+      background: transparent;
     }
     .ed-media .thumb {
-      aspect-ratio: 16/9;
-      background: #efede8;
+      display: inline-block;
+      aspect-ratio: auto;
+      max-width: 100%;
+      background: transparent;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(15, 43, 70, .10);
     }
     .ed-media .thumb img {
-      object-fit: contain;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 500px;
+      object-fit: initial;
     }
     .ed-media .thumb:hover img {
       transform: scale(1.02);
     }
     .ed-media .video-box {
+      width: 100%;
       aspect-ratio: 16/9;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(15, 43, 70, .10);
     }
     .ed-text {
       width: 100%;
