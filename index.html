@@ -18,7 +18,7 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     [hidden] { display: none !important; }
-    html { scroll-behavior: smooth; scroll-padding-top: 70px; -webkit-text-size-adjust: 100%; }
+    html { scroll-behavior: smooth; scroll-padding-top: 88px; -webkit-text-size-adjust: 100%; }
     body {
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background: var(--bg);
@@ -50,8 +50,8 @@
     /* Đầu trang */
     .hero {
       position: relative;
-      min-height: 70vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
@@ -59,24 +59,53 @@
       background: var(--navy);
       overflow: hidden;
     }
-    @media (min-width: 900px) { .hero { min-height: 80vh; } }
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      opacity: 0;
-      transform: scale(1.1);
-      transition: opacity 1.6s ease, transform 14s ease-out;
+    .hero-mobile-wrap {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      background: var(--navy);
     }
-    .hero-bg.loaded { opacity: .5; transform: scale(1); }
-    .hero::after {
+    .hero-mobile-wrap::after {
       content: "";
       position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(15, 43, 70, .35), rgba(15, 43, 70, .92));
+      left: 0; right: 0; bottom: 0;
+      height: 52px;
+      background: linear-gradient(180deg, rgba(15, 43, 70, 0), var(--navy));
+      pointer-events: none;
     }
-    .hero-content { position: relative; z-index: 1; padding: 56px 22px; max-width: 880px; width: 100%; }
+    .hero-mobile-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      opacity: 0;
+      transform: scale(1.04);
+      transition: opacity .65s ease, transform 1.6s ease-out;
+    }
+    .hero-mobile-img.loaded { opacity: 1; transform: scale(1); }
+    .hero-bg { display: none; }
+    .hero-content { position: relative; z-index: 1; padding: 28px 20px 44px; max-width: 880px; width: 100%; }
+    @media (min-width: 720px) {
+      .hero { min-height: 76vh; }
+      .hero-mobile-wrap { display: none; }
+      .hero-bg {
+        display: block;
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transform: scale(1.05);
+        transition: opacity .75s ease, transform 2.8s ease-out;
+      }
+      .hero-bg.loaded { opacity: .5; transform: scale(1); }
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(15, 43, 70, .32), rgba(15, 43, 70, .9));
+      }
+      .hero-content { padding: 56px 22px; }
+    }
     .hero-content > * { opacity: 0; }
     .hero-content.ready > * { animation: fadeUp .9s ease forwards; }
     .hero-content.ready > :nth-child(1) { animation-delay: .1s; }
@@ -219,13 +248,16 @@
     .editorial-list {
       display: flex;
       flex-direction: column;
-      gap: 44px;
+      gap: 20px;
     }
     .ed-item {
       display: flex;
       flex-direction: column;
-      gap: 22px;
+      gap: 14px;
       align-items: center;
+      background: var(--bg);
+      border-radius: 18px;
+      padding: 14px 14px 18px;
     }
     .ed-media {
       width: 100%;
@@ -238,15 +270,15 @@
       aspect-ratio: auto;
       max-width: 100%;
       background: transparent;
-      border-radius: 18px;
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(15, 43, 70, .10);
+      box-shadow: 0 6px 20px rgba(15, 43, 70, .10);
     }
     .ed-media .thumb img {
       width: auto;
       height: auto;
       max-width: 100%;
-      max-height: 500px;
+      max-height: 280px;
       object-fit: initial;
     }
     .ed-media .thumb:hover img {
@@ -255,64 +287,74 @@
     .ed-media .video-box {
       width: 100%;
       aspect-ratio: 16/9;
-      border-radius: 18px;
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(15, 43, 70, .10);
+      box-shadow: 0 6px 20px rgba(15, 43, 70, .10);
     }
     .ed-text {
       width: 100%;
+      padding: 0 4px;
     }
     .ed-item:not(.has-media) {
-      background: var(--bg);
-      border-radius: 18px;
-      padding: 26px 28px;
+      padding: 20px 20px;
       border-left: 4px solid var(--gold);
       align-items: flex-start;
     }
     .ed-kicker {
       display: inline-block;
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1.2px;
+      letter-spacing: 1px;
       color: var(--gold-dark);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .ed-text h3 {
-      font-size: clamp(22px, 3vw, 28px);
+      font-size: clamp(18px, 2.8vw, 26px);
       font-weight: 800;
       color: var(--navy);
-      line-height: 1.22;
-      margin-bottom: 12px;
+      line-height: 1.25;
+      margin-bottom: 8px;
     }
     .ed-text p {
-      font-size: 16px;
+      font-size: 14.5px;
+      color: #36393f;
+      line-height: 1.6;
+    }
+    .ed-text ul {
+      margin-top: 6px;
+      padding-left: 18px;
+      font-size: 14.5px;
       color: #36393f;
       line-height: 1.65;
     }
-    .ed-text ul {
-      margin-top: 8px;
-      padding-left: 20px;
-      font-size: 16px;
-      color: #36393f;
-      line-height: 1.7;
-    }
-    .ed-text li { margin: 4px 0; }
+    .ed-text li { margin: 3px 0; }
     @media (min-width: 820px) {
-      .editorial-list { gap: 56px; }
+      .editorial-list { gap: 52px; }
       .ed-item.has-media {
         flex-direction: row;
         gap: 44px;
+        background: transparent;
+        padding: 0;
+        border-radius: 0;
       }
       .ed-item.has-media.flip {
         flex-direction: row-reverse;
       }
       .ed-item.has-media .ed-media {
-        flex: 0 0 52%;
+        flex: 0 0 50%;
       }
+      .ed-media .thumb, .ed-media .video-box {
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(15, 43, 70, .10);
+      }
+      .ed-media .thumb img { max-height: 380px; }
       .ed-item.has-media .ed-text {
         flex: 1;
+        padding: 0;
       }
+      .ed-text p, .ed-text ul { font-size: 16px; }
+      .ed-item:not(.has-media) { padding: 26px 28px; }
     }
 
     /* Xem ảnh phóng to */
@@ -347,6 +389,7 @@
 </head>
 <body>
   <header class="hero" id="top">
+    <div class="hero-mobile-wrap" id="hero-mobile-wrap" hidden><img class="hero-mobile-img" id="hero-mobile-img" alt="Banner sự kiện"></div>
     <div class="hero-bg" id="hero-bg"></div>
     <div class="hero-content" id="hero-content">
       <p class="eyebrow">CẨM NANG SỰ KIỆN</p>
@@ -362,7 +405,7 @@
   <main id="main" hidden></main>
 
   <footer>
-    <p>Chúc các chiến binh kinh doanh toàn thắng.</p>
+    <p>Tài liệu nội bộ, không chia sẻ ra bên ngoài.</p>
     <p style="margin-top:8px"><a href="#top">↑ Về đầu trang</a></p>
   </footer>
 
@@ -645,11 +688,15 @@
 
       const bg = imgUrl(kv["Ảnh nền"]);
       if (bg) {
-        // Chỉ hiện ảnh nền khi đã tải xong để animation mượt
+        const mWrap = $("hero-mobile-wrap");
+        const mImg = $("hero-mobile-img");
         const probe = new Image();
         probe.onload = () => {
           $("hero-bg").style.backgroundImage = `url("${bg}")`;
           $("hero-bg").classList.add("loaded");
+          mImg.src = bg;
+          mWrap.hidden = false;
+          requestAnimationFrame(() => mImg.classList.add("loaded"));
         };
         probe.src = bg;
       }
